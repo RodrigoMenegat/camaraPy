@@ -38,7 +38,7 @@ REQUEST_TYPES = {
                                           }, 
 
   'ObterProposicao'                     : {
-                                           'url_ending'       : "/ObterProposicao",
+                                           'url_ending'       : "/ObterProposicao?",
                                            'allowed_params'   : [ 'Tipo', 'Numero', 'Ano' ],
                                            'mandatory_params' : [ 'Tipo', 'Numero', 'Ano' ]
                                           }, 
@@ -71,7 +71,7 @@ REQUEST_TYPES = {
 
 
 # Função genérica para construir a URL da solicitação
-def build_url(request_type, **kwargs):
+def build_url(request_type, parameters):
 
   ''' 
   Essa é uma função genérica que constrói a URL
@@ -82,45 +82,44 @@ def build_url(request_type, **kwargs):
   request_type -> O tipo de requisição, que deve estar entre as chaves
   da variável global REQUEST_TYPES
 
-  **kwargs -> Um objeto que contém os pares nome:valor que serão passados
+  parameters -> Um objeto que contém os pares nome:valor que serão passados
   para a URL. Exemplo: { "DtInicio":01/01/1901, "DtFim":'DtFim:01/01/2001 },
   que virariam [url]?DtInicio=01/01/1901&dtFim=01/01/2001.
   '''
 
   # Checar se o tipo de requisição é válida
   if request_type not in REQUEST_TYPES.keys():
-    raise Exception("O tipo de requisição que você enviou é inválido")
+    raise Exception(f"O tipo de requisição que você enviou é inválido. Os tipos válidos são: { list(REQUEST_TYPES.keys()) }")
 
   # Para economizar operações e tornar o código claro, salva o item em uma variável 
   this_request_type = REQUEST_TYPES[request_type]
 
   # Checar se os argumentos passados são válidos para o tipo da requisição
-  wrong_params = [ item for item in kwargs.keys() if item not in this_request_type["allowed_params"] ]
+  wrong_params = [ item for item in parameters.keys() if item not in this_request_type["allowed_params"] ]
   if any(wrong_params):
     allowed_params = this_request_type["allowed_params"]
     raise Exception(f"Ao menos um dos parâmetros que você escolheu para essa requisição é inválido: {wrong_params}.\nOs parâmetros permitidos são {allowed_params}")
   
   # Checar se mandou todos os parâmetros obrigatórios
-  missing_params = [ item for item in this_request_type["mandatory_params"] if item not in kwargs.keys() ]
+  missing_params = [ item for item in this_request_type["mandatory_params"] if item not in parameters.keys() ]
   if any(missing_params):
     raise Exception(f"Faltam parâmetros obrigatórios na sua requisição: {missing_params}")
 
-  # Agora vamos preencher os kwargs faltantes - essa versão da API da Câmara exige que 
+  # Agora vamos preencher os parameters faltantes - essa versão da API da Câmara exige que 
   # __todos__ os parâmetros estejam presentes na URL, ainda que o valor seja nulo ¯\_(ツ)_/¯
   for item in this_request_type["allowed_params"]:
-    if item not in kwargs:
-      kwargs[item] = ""
+    if item not in parameters:
+      parameters[item] = ""
 
   # Caso passe por ambos os testes, criar uma string para a url com base na request_type
   url = BASE_URL + this_request_type['url_ending']
 
   # Criar uma string com os parâmetros passados para a URL
   string = ""
-  for k,v in kwargs.items():
+  for k,v in parameters.items():
     substring = f"&{k}={v}"
     string += substring
   string = string.strip("&")
-
 
   # Concatena ambas as strings
   url += string
@@ -128,7 +127,7 @@ def build_url(request_type, **kwargs):
   return url
 
 # Função para executar uma requisição
-def make_request(request_type, **kwargs):
+def make_request(request_type, parameters):
 
   '''
   Essa função faz uma requisição usando o módulo
@@ -141,23 +140,21 @@ def make_request(request_type, **kwargs):
   Parâmetros:
   request_type -> O tipo de requisição, que deve estar entre as chaves
   da variável global REQUEST_TYPES
-  **kwargs -> Um objeto que contém os pares nome:valor que serão passados
+  parameters -> Um objeto que contém os pares nome:valor que serão passados
   para a URL. Exemplo: { "DtInicio":01/01/1901, "DtFim":'DtFim:01/01/2001 },
   que virariam [url]?DtInicio=01/01/1901&dtFim=01/01/2001.
 
   '''
 
-  url = build_url(request_type, **kwargs)
+  url = build_url(request_type, parameters)
   response = requests.get(url)
+  data = response.text
 
   # Levanta exceção HTTPError caso a resposta tenha código 4xx ou 5xx
-  response.raise_for_status()
-
-  # TO DO: acho que, já que a URL é preenchida com os campos faltantes
-  # na função build_url, esse bloco de código é desnecessário.
-  data = response.text
-  if 'Missing parameter' in data:
-    raise Exception(f"Faltaram parâmetros na sua requisição. O servidor respondeu com: '{data.text}'")
+  # TO DO: vale a pena lidar de forma diferente com erros 404, que
+  # denotam que não foram encontrados dados para uma busca específica?
+  if response.status_code in range(400, 501):
+    raise requests.HTTPError(f"Houve um erro na sua requisição. O servidor respondeu com: '{data}'")
 
   # Transforma em JSON
   data = xmltodict.parse(data)
@@ -165,8 +162,11 @@ def make_request(request_type, **kwargs):
   # Checa se retornou dados com erro
   if 'erro' in data.keys():
     error_message = data['erro']['descricao']
-    raise Exception(f"A sua solicitação é inválida. O servidor respondeu com: \"{error_message}\"")
+    raise Exception(f"Houve um erro na sua requisição. O servidor respondeu com: \"{error_message}\"")
 
 
   return data
 
+def make_request_inner(request_type, dict_obj):
+
+  make_request(request_tipe, **dict_obj)
