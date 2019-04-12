@@ -2,6 +2,10 @@
 import requests
 import xmltodict
 
+#########################
+### VARIÁVEIS GLOBAIS ###
+#########################
+
 # Define URL base
 BASE_URL = "https://www.camara.leg.br/SitCamaraWS/Proposicoes.asmx"
 
@@ -69,6 +73,9 @@ REQUEST_TYPES = {
 
 } 
 
+###############################
+## FUNCIONALIDADES CENTRAIS ###
+###############################
 
 # Função genérica para construir a URL da solicitação
 def build_url(request_type, parameters):
@@ -98,12 +105,17 @@ def build_url(request_type, parameters):
   wrong_params = [ item for item in parameters.keys() if item not in this_request_type["allowed_params"] ]
   if any(wrong_params):
     allowed_params = this_request_type["allowed_params"]
-    raise Exception(f"Ao menos um dos parâmetros que você escolheu para essa requisição é inválido: {wrong_params}.\nOs parâmetros permitidos são {allowed_params}")
+    if len(allowed_params) > 0:
+      err_message = f"Ao menos um dos parâmetros que você escolheu para essa requisição é inválido: {wrong_params}.\nOs parâmetros permitidos são {allowed_params}"
+    else:
+      err_message = f"Ao menos um dos parâmetros que você escolheu para essa requisição é inválido: {wrong_params}.\nEssa requisição não permite nenhum parâmetro."
+      raise Exception(err_message)
   
   # Checar se mandou todos os parâmetros obrigatórios
   missing_params = [ item for item in this_request_type["mandatory_params"] if item not in parameters.keys() ]
   if any(missing_params):
-    raise Exception(f"Faltam parâmetros obrigatórios na sua requisição: {missing_params}")
+    err_message = f"Faltam parâmetros obrigatórios na sua requisição: {missing_params}"
+    raise Exception(err_message)
 
   # Agora vamos preencher os parameters faltantes - essa versão da API da Câmara exige que 
   # __todos__ os parâmetros estejam presentes na URL, ainda que o valor seja nulo ¯\_(ツ)_/¯
@@ -161,12 +173,33 @@ def make_request(request_type, parameters):
 
   # Checa se retornou dados com erro
   if 'erro' in data.keys():
-    error_message = data['erro']['descricao']
-    raise Exception(f"Houve um erro na sua requisição. O servidor respondeu com: \"{error_message}\"")
+    server_message = data['erro']['descricao']
+    raise Exception(f"Houve um erro na sua requisição. O servidor respondeu com: \"{server_message}\"")
 
 
   return data
 
-def make_request_inner(request_type, dict_obj):
+##########################
+## WRAPPERS COSMÉTICOS ###
+##########################
 
-  make_request(request_tipe, **dict_obj)
+def ListarProposicoes(parameters = { }):
+  return make_request('ListarProposicoes', parameters)
+
+def ListarSiglasTipoProposicao(parameters = { }):
+  return make_request('ListarSiglasTipoProposicao', parameters)
+
+def ListarSituacoesProposicao(parameters = { }):
+  return make_request('ListarSituacoesProposicao', parameters)
+
+def ListarTiposAutores(parameters = { }):
+  return make_request('ListarTiposAutores', parameters)
+
+def ObterProposicao(parameters = { }):
+  return make_request('ObterProposicao', parameters)
+
+def ListarProposicoesVotadasEmPlenario(parameters = { }):
+  return make_request('ListarProposicoesVotadasEmPlenario', parameters)
+
+def ListarProposicoesTramitadasNoPeriodo(parameters = { }):
+  return make_request('ListarProposicoesTramitadasNoPeriodo', parameters)
