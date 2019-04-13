@@ -1,10 +1,16 @@
-# Importa pacotes necessários
-import requests
-import xmltodict
+from camaraPy.api_original.tools import tools
 
-#########################
-### VARIÁVEIS GLOBAIS ###
-#########################
+def ObterDeputados(parameters = { }):
+  return tools.make_request('ObterDeputados', parameters, 'deputado')
 
-# Define URL base
-BASE_URL = "https://www.camara.leg.br/SitCamaraWS/Proposicoes.asmx"
+def ObterDetalhesDeputados(parameters = { }):
+  return tools.make_request('ObterDetalhesDeputados', parameters, 'deputado')
+
+def ObterLideresBancadas(parameters = { }):
+  return tools.make_request('ObterLideresBancadas', parameters, 'deputado')
+
+def ObterPartidosCD(parameters = { }):
+  return tools.make_request('ObterPartidosCD', parameters, 'deputado')
+
+def ObterPartidosBlocoCD(parameters = { }):\
+  return tools.make_request('ObterPartidosBlocoCD', parameters, 'deputado')
