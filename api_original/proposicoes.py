@@ -15,6 +15,12 @@ def ListarTiposAutores(parameters = { }):
 def ObterProposicao(parameters = { }):
   return tools.make_request('ObterProposicao', parameters, 'proposicoes')
 
+def ObterProposicaoPorID(parameters = { }):
+  return tools.make_request('ObterProposicaoPorID', parameters, 'proposicoes')
+
+def ObterVotacaoProposicao(parameters = { }):
+  return tools.make_request('ObterVotacaoProposicao', parameters, 'proposicoes')
+
 def ListarProposicoesVotadasEmPlenario(parameters = { }):
   return tools.make_request('ListarProposicoesVotadasEmPlenario', parameters, 'proposicoes')
 
