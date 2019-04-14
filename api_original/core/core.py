@@ -1,10 +1,20 @@
-# Importa pacotes necessários
+####################
+### DEPENDÊNCIAS ###
+####################
+
 import requests
 import xmltodict
 
 ###############################
-## FUNCIONALIDADES CENTRAIS ###
+### EXCEÇÕES PERSONALIZADAS ###
 ###############################
+
+from .custom_exceptions import ProposicaoAcessoria
+
+
+#########################
+## PARÂMETROS GLOBAIS ###
+#########################
 
 # Dicionário que contem os serviços da velha API
 # os parâmetros permitidos/obrigatórios para cada
@@ -162,19 +172,55 @@ WEBSERVICES = {
                                                         'mandatory_params': [ 'IdOrgao' ]
                                                         }
 
-              }
+              },
+
+  'SessoesReunioes' : {
+
+              'ListarDiscursosPlenario'     : {
+                                              'url_ending'      : "/ListarDiscursosPlenario?",
+                                              'allowed_params'  : [ 'dataIni', 'dataFim', 'CodigoSessao', 'ParteNomeParlamentar', 'SiglaPartido', 'SiglaUF' ],
+                                              'mandatory_params': [ 'dataIni', 'dataFim' ]
+                                              },
+
+              'ListarPresencasDia'          : {
+                                              'url_ending'      : "/ListarPresencasDia?",
+                                              'allowed_params'  : [ 'data', 'numMatriculaParlamentar', 'siglaPartido', 'siglaUF' ],
+                                              'mandatory_params': [ 'data' ]
+                                              },
+
+              'ListarPresencasParlamentar'  : {
+                                              'url_ending'      : "/ListarPresencasParlamentar?",
+                                              'allowed_params'  : [ 'dataIni', 'dataFim', 'numMatriculaParlamentar' ],
+                                              'mandatory_params': [ 'dataIni', 'dataFim', 'numMatriculaParlamentar' ]
+                                              },
+
+              'ListarSituacoesReuniaoSessao' : {
+                                               'url_ending'      : "/ListarSituacoesReuniaoSessao",
+                                               'allowed_params'  : [ ],
+                                               'mandatory_params': [ ]
+                                               },
+
+
+
+  }
 
 }
 
 BASE_URLS = {
   
-  'proposicoes' : "https://www.camara.leg.br/SitCamaraWS/Proposicoes.asmx",
+  'proposicoes'     : "https://www.camara.leg.br/SitCamaraWS/Proposicoes.asmx",
 
-  'deputado'    : "http://www.camara.gov.br/SitCamaraWS/Deputados.asmx",
+  'deputado'        : "http://www.camara.gov.br/SitCamaraWS/Deputados.asmx",
 
-  'orgaos'      : "http://www.camara.gov.br/SitCamaraWS/Orgaos.asmx"
+  'orgaos'          : "http://www.camara.gov.br/SitCamaraWS/Orgaos.asmx",
+
+  'SessoesReunioes' : "http://www.camara.gov.br/SitCamaraWS/SessoesReunioes.asmx"
 
 }
+
+################################
+### FUNCIONALIDADES CENTRAIS ###
+################################
 
 # Função genérica para construir a URL da solicitação
 def build_url(request_type, parameters, webservice):
@@ -275,7 +321,12 @@ def make_request(request_type, parameters, webservice):
   # TO DO: vale a pena lidar de forma diferente com erros 404, que
   # denotam que não foram encontrados dados para uma busca específica?
   if response.status_code in range(400, 501):
-    raise requests.HTTPError(f"Houve um erro na sua requisição. O servidor respondeu com: '{data}'")
+
+    if 'proposicao e acessoria' in data:
+      raise ProposicaoAcessoria(ProposicaoAcessoria.err_message)
+
+    else:
+      raise requests.HTTPError(f"Houve um erro na sua requisição. O servidor respondeu com: '{data}'")
 
   # Transforma em JSON
   data = xmltodict.parse(data)
