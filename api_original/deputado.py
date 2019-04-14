@@ -12,5 +12,5 @@ def ObterLideresBancadas(parameters = { }):
 def ObterPartidosCD(parameters = { }):
   return tools.make_request('ObterPartidosCD', parameters, 'deputado')
 
-def ObterPartidosBlocoCD(parameters = { }):\
+def ObterPartidosBlocoCD(parameters = { }):
   return tools.make_request('ObterPartidosBlocoCD', parameters, 'deputado')
