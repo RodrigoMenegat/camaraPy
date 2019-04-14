@@ -1,13 +1,13 @@
-from camaraPy.api_original.tools import tools
+from camaraPy.api_original.core import core, custom_exceptions
 
 def ListarDiscursosPlenario(parameters = { }):
-  return tools.make_request('ListarDiscursosPlenario', parameters, 'SessoesReunioes')
+  return core.make_request('ListarDiscursosPlenario', parameters, 'SessoesReunioes')
 
 def ListarPresencasDia(parameters = { }):
-  return tools.make_request('ListarPresencasDia', parameters, 'SessoesReunioes')
+  return core.make_request('ListarPresencasDia', parameters, 'SessoesReunioes')
 
 def ListarPresencasParlamentar(parameters = { }):
-  return tools.make_request('ListarPresencasParlamentar', parameters, 'SessoesReunioes')
+  return core.make_request('ListarPresencasParlamentar', parameters, 'SessoesReunioes')
 
 def ListarSituacoesReuniaoSessao(parameters = { }):
-  return tools.make_request('ListarSituacoesReuniaoSessao', parameters, 'SessoesReunioes')
+  return core.make_request('ListarSituacoesReuniaoSessao', parameters, 'SessoesReunioes')

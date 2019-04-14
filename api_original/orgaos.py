@@ -1,28 +1,28 @@
-from camaraPy.api_original.tools import tools
+from camaraPy.api_original.core import core, custom_exceptions
 
 def ListarCargosOrgaosLegislativosCD(parameters = { }):
-  return tools.make_request('ListarCargosOrgaosLegislativosCD', parameters, 'orgaos')
+  return core.make_request('ListarCargosOrgaosLegislativosCD', parameters, 'orgaos')
 
 def ListarTiposOrgaos(parameters = { }):
-  return tools.make_request('ListarTiposOrgaos', parameters, 'orgaos')
+  return core.make_request('ListarTiposOrgaos', parameters, 'orgaos')
 
 def ObterAndamento(parameters = { }):
-  return tools.make_request('ObterAndamento', parameters, 'orgaos')
+  return core.make_request('ObterAndamento', parameters, 'orgaos')
 
 def ObterEmendasSubstitutivoRedacaoFinal(parameters = { }):
-  return tools.make_request('ObterEmendasSubstitutivoRedacaoFinal', parameters, 'orgaos')
+  return core.make_request('ObterEmendasSubstitutivoRedacaoFinal', parameters, 'orgaos')
 
 def ObterIntegraComissoesRelator(parameters = { }):
-  return tools.make_request('ObterIntegraComissoesRelator', parameters, 'orgaos')
+  return core.make_request('ObterIntegraComissoesRelator', parameters, 'orgaos')
 
 def ObterMembrosOrgao(parameters = { }):
-  return tools.make_request('ObterMembrosOrgao', parameters, 'orgaos')
+  return core.make_request('ObterMembrosOrgao', parameters, 'orgaos')
 
 def ObterOrgaos(parameters = { }):
-  return tools.make_request('ObterOrgaos', parameters, 'orgaos')
+  return core.make_request('ObterOrgaos', parameters, 'orgaos')
 
 def ObterPauta(parameters = { }):
-  return tools.make_request('ObterPauta', parameters, 'orgaos')
+  return core.make_request('ObterPauta', parameters, 'orgaos')
 
 def ObterRegimeTramitacaoDespacho(parameters = { }):
-  return tools.make_request('ObterRegimeTramitacaoDespacho', parameters, 'orgaos')
+  return core.make_request('ObterRegimeTramitacaoDespacho', parameters, 'orgaos')
