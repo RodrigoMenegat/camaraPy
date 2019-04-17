@@ -22,14 +22,14 @@ Por enquanto, o módulo funciona apenas com a [API original](https://www2.camara
 
 ## Como usar?
 
-Todos as requsições descritas na [documentação da Câmara](https://www2.camara.leg.br/transparencia/dados-abertos/dados-abertos-legislativo/dados-abertos-legislativo) foram implementadas, exatamente com a mesma grafia. O nome dos webservices, porém, é grafado seguindo um padrão `lowercase_com_underlines`.
+Todas as requsições descritas na [documentação da Câmara](https://www2.camara.leg.br/transparencia/dados-abertos/dados-abertos-legislativo/dados-abertos-legislativo) foram implementadas, exatamente com a mesma grafia. O nome dos webservices, porém, é grafado seguindo um padrão `lowercase_com_underlines`.
 
-Assim, por exemplo, para acessar o método *ListarDiscursosPlenario* do Webservice *SessoesReunioes*, o usuário precisa executar o seguinte código, no qual a variável `params` é um dicionário com os parâmetros que devem ser feitos na requisição.
+Assim, para acessar o método *ListarDiscursosPlenario* do Webservice *SessoesReunioes*, o usuário precisa executar o seguinte código, no qual a variável `params` é um dicionário com os parâmetros que deseja passar para a requisição.
 
 ```
 from camaraPy.api_original import sessoes_reunioes
 
-params = { "DataIni" : "10/10/2018", "DataFim" : "10/10/2018" }
+params = { "DataIni" : "10/10/2018", "DataFim" : "13/10/2018" }
 dados = sessoes_reunioes.ListarDiscursosPlenario(params)
 ```
 
@@ -41,7 +41,7 @@ dados = deputados.ObterDeputados()
 ```
 
 Por enquanto, a maneira mais fácil de usar é clonar esse repositório e importar os arquivos relevantes manualmente. Em breve, quando mais testes forem realizados, pretendo colocar tudo 
-no [PyPI](https://pypi.org/) para que você possa instalar via `pip`! ✨
+no [PyPI](https://pypi.org/) para que você possa instalar o módulo via `pip`. ✨
 
 ## Coisas técnicas:
 
