@@ -1,8 +1,6 @@
 # camaraPy
 
-## O que é?
-
-O pacote camaraPy é um wrapper, ainda em estágio inicial de desenvolvido, para as APIs da [Câmara dos Deputados](https://dadosabertos.camara.leg.br/).
+O pacote camaraPy é um wrapper, ainda em estágio inicial de desenvolvimento, para as APIs da [Câmara dos Deputados](https://dadosabertos.camara.leg.br/).
 
 Agora, em vez de montar a requisição manualmente usando pacotes como `urrlib` ou `requests`, você pode simplesmente instalar o **camaraPy** e fazer tudo em poucas linhas de código:
 
@@ -11,9 +9,9 @@ from camaraPy.api_original import proposicoes
 
 # Define parâmetros para a consulta
 params = {
-    "Tipo"   : prop['@tipo'].strip(),
-    "Numero" : prop['@numero'].strip(),
-    "Ano"    : prop['@ano'].strip()
+    "Tipo"   : "PEC",
+    "Numero" : "666",
+    "Ano"    : "2019"
   }
         
 # Acessa as votações da proposta
@@ -31,7 +29,7 @@ Assim, por exemplo, para acessar o método *ListarDiscursosPlenario* do Webservi
 ```
 from camaraPy.api_original import sessoes_reunioes
 
-parames = { "DataIni" : "10/10/2018", "DataFim" : "10/10/2018" }
+params = { "DataIni" : "10/10/2018", "DataFim" : "10/10/2018" }
 dados = sessoes_reunioes.ListarDiscursosPlenario(parametros)
 ```
 
