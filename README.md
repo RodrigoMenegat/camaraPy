@@ -12,10 +12,10 @@ params = {
     "Tipo"   : "PEC",
     "Numero" : "666",
     "Ano"    : "2019"
-  }
+}
         
 # Acessa as votações da proposta
-voting_sessions = proposicoes.ObterVotacaoProposicao(params)
+dados = proposicoes.ObterVotacaoProposicao(params)
 ```
 
 Por enquanto, o módulo funciona apenas com a [API original](https://www2.camara.leg.br/transparencia/dados-abertos/dados-abertos-legislativo), que é mais estável e inclui o resultado das votações em plenário, dado que ainda não está disponível no novo serviço.
