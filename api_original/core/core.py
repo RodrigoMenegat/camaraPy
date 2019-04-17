@@ -11,7 +11,6 @@ import xmltodict
 
 from .custom_exceptions import ProposicaoAcessoria
 
-
 #########################
 ## PARÂMETROS GLOBAIS ###
 #########################
@@ -227,8 +226,7 @@ def build_url(request_type, parameters, webservice):
 
   ''' 
   Essa é uma função genérica que constrói a URL
-  de qualquer solicitação possível para o endpoint
-  de proposições da API.
+  de qualquer solicitação possível para a API.
 
   Parâmetros:
   request_type -> O tipo de requisição, que deve estar entre as chaves
@@ -236,55 +234,67 @@ def build_url(request_type, parameters, webservice):
 
   parameters -> Um objeto que contém os pares nome:valor que serão passados
   para a URL. Exemplo: { "DtInicio":01/01/1901, "DtFim":'DtFim:01/01/2001 },
-  que virariam [url]?DtInicio=01/01/1901&dtFim=01/01/2001.
+  que virariam uma string '[url]?DtInicio=01/01/1901&dtFim=01/01/2001.'
 
   webservice -> String usada para selecionar os parâmetros permitidos e obrigatórios 
   em cada tipo de requisição. É, na prática, uma chave usada para acessar os dados do
   dicionário global WEBSERVICES.
   '''
 
+  # Seleciona o webservice desejado para a requisição
   request_types = WEBSERVICES[webservice]
 
-  # Checar se o tipo de requisição é válida
+  # Checa se o tipo de requisição é válido
   if request_type not in request_types.keys():
     raise Exception(f"O tipo de requisição que você enviou é inválido. Os tipos válidos são: { list(request_types.keys()) }")
 
-  # Para economizar operações e tornar o código claro, salva o item em uma variável 
+  # Para economizar operações e tornar o código mais claro, salva o subdicionário 
+  # referente a esse tipo de requisição em uma variável.
   this_request_type = request_types[request_type]
 
-  # Checar se os argumentos passados são válidos para o tipo da requisição
-  wrong_params = [ item for item in parameters.keys() if item not in this_request_type["allowed_params"] ]
+  # Salva também os parâmetros permitidos/obrigatórios para essa requisição
+  allowed_params = this_request_type["allowed_params"]
+  mandatory_params = this_request_type["mandatory_params"]
+
+  # Checa se os argumentos passados são válidos para esse tipo da requisição.
+  wrong_params = [ item for item in parameters.keys() if item not in allowed_params ]
+
   if any(wrong_params):
-    allowed_params = this_request_type["allowed_params"]
+    
     if len(allowed_params) > 0:
       err_message = f"Ao menos um dos parâmetros que você escolheu para essa requisição é inválido: {wrong_params}.\nOs parâmetros permitidos são {allowed_params}"
+    
     else:
       err_message = f"Ao menos um dos parâmetros que você escolheu para essa requisição é inválido: {wrong_params}.\nEssa requisição não permite nenhum parâmetro."
       raise Exception(err_message)
   
-  # Checar se mandou todos os parâmetros obrigatórios
-  missing_params = [ item for item in this_request_type["mandatory_params"] if item not in parameters.keys() ]
+  # Checa se todos os parâmetros obrigatórios foram enviados
+  missing_params = [ item for item in mandatory_params if item not in parameters.keys() ]
+
   if any(missing_params):
     err_message = f"Faltam parâmetros obrigatórios na sua requisição: {missing_params}"
     raise Exception(err_message)
 
-  # Agora vamos preencher os parameters faltantes - essa versão da API da Câmara exige que 
-  # __todos__ os parâmetros estejam presentes na URL, ainda que o valor seja nulo ¯\_(ツ)_/¯
-  for item in this_request_type["allowed_params"]:
+  # Essa versão da API da Câmara exige que __todos__ os parâmetros possíveis estejam presentes 
+  # na URL, ainda que o valor seja nulo. ¯\_(ツ)_/¯ Vamos adicionar:
+  for item in allowed_params:
+
     if item not in parameters:
       parameters[item] = ""
 
-  # Caso passe por ambos os testes, criar uma string para a url com base na request_type
-  url = BASE_URLS[webservice] + this_request_type['url_ending']
+  # Cria uma string para a url com base na request_type
+  url = BASE_URLS[webservice] + this_request_type["url_ending"]
 
   # Criar uma string com os parâmetros passados para a URL
   string = ""
+
   for k,v in parameters.items():
     substring = f"&{k}={v}"
     string += substring
+
   string = string.strip("&")
 
-  # Concatena ambas as strings
+  # Concatena url e parâmetros
   url += string
   
   return url
@@ -303,6 +313,7 @@ def make_request(request_type, parameters, webservice):
   Parâmetros:
   request_type -> O tipo de requisição, que deve estar entre as chaves
   da variável global REQUEST_TYPES
+
   parameters -> Um objeto que contém os pares nome:valor que serão passados
   para a URL. Exemplo: { "DtInicio":01/01/1901, "DtFim":'DtFim:01/01/2001 },
   que virariam [url]?DtInicio=01/01/1901&dtFim=01/01/2001.
@@ -310,9 +321,9 @@ def make_request(request_type, parameters, webservice):
   webservice -> String usada para selecionar os parâmetros permitidos e obrigatórios 
   em cada tipo de requisição. É, na prática, uma chave usada para acessar os dados do
   dicionário global WEBSERVICES.
-
   '''
 
+  # Monta url e faz requisicão
   url = build_url(request_type, parameters, webservice)
   response = requests.get(url)
   data = response.text
@@ -331,7 +342,8 @@ def make_request(request_type, parameters, webservice):
   # Transforma em JSON
   data = xmltodict.parse(data)
 
-  # Checa se retornou dados com erro
+  # Checa se retornou erro em formato xml (o que acontece sem explicação do motivo, 
+  # de vez em quando ¯\_(ツ)_/¯
   if 'erro' in data.keys():
     server_message = data['erro']['descricao']
     raise Exception(f"Houve um erro na sua requisição. O servidor respondeu com: \"{server_message}\"")
