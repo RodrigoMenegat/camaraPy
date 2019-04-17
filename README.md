@@ -40,9 +40,11 @@ from camaraPy.api_original import deputados
 dados = deputados.ObterDeputados()
 ```
 
+Os dados já vêm parseados em um dicionário no estilo JSON, embora a API retorne os valores em formato XML. Isso é possível porque o **camaraPy** usa o fenomenal pacote [`xmltodict`](https://github.com/martinblech/xmltodict)para fazer a conversão. :heart:
+
 Por enquanto, a maneira mais fácil de usar é clonar esse repositório e importar os arquivos relevantes manualmente. Em breve, quando mais testes forem realizados, pretendo colocar tudo 
 no [PyPI](https://pypi.org/) para que você possa instalar o módulo via `pip`. ✨
 
 ## Coisas técnicas:
 
-O código, consiste, basicamente, em um script genérico que faz solicitações variadas para a API. Ele está disponível no diretório `core`. A partir desse programa, foram criadas funções encapsuladoras em `deputados.py`, `orgaos.py`, `sessoes_reunioes.py` e `votacoes.py`. Elas apenas chamam as funções definidas em `core.py` com os parâmetros corretos.
+O código consiste, basicamente, em um script genérico que faz solicitações variadas para a API. Ele está disponível no diretório `core`. A partir desse programa, foram criadas funções encapsuladoras em `deputados.py`, `orgaos.py`, `sessoes_reunioes.py` e `votacoes.py`. Elas apenas chamam as funções definidas em `core.py` com os parâmetros corretos.
