@@ -31,7 +31,7 @@ Assim, por exemplo, para acessar o método *ListarDiscursosPlenario* do Webservi
 ```
 from camaraPy.api_original import sessoes_reunioes
 
-parametros = { "DataIni" : "10/10/2018", "DataFim" : "10/10/2018" }
+parames = { "DataIni" : "10/10/2018", "DataFim" : "10/10/2018" }
 dados = sessoes_reunioes.ListarDiscursosPlenario(parametros)
 ```
 
