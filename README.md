@@ -30,7 +30,7 @@ Assim, por exemplo, para acessar o método *ListarDiscursosPlenario* do Webservi
 from camaraPy.api_original import sessoes_reunioes
 
 params = { "DataIni" : "10/10/2018", "DataFim" : "10/10/2018" }
-dados = sessoes_reunioes.ListarDiscursosPlenario(parametros)
+dados = sessoes_reunioes.ListarDiscursosPlenario(params)
 ```
 
 De maneira semelhante, para acessar o método *ObterDeputados* do Webservice *Deputados*, o código seria o seguinte:
@@ -39,6 +39,9 @@ from camaraPy.api_original import deputados
 
 dados = deputados.ObterDeputados()
 ```
+
+Por enquanto, a maneira mais fácil de usar é clonar esse repositório e importar os arquivos relevantes manualmente. Em breve, quando mais testes forem realizados, pretendo colocar tudo 
+no [PyPI](https://pypi.org/) para que você possa instalar via `pip`! ✨
 
 ## Coisas técnicas:
 
