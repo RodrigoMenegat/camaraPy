@@ -42,8 +42,12 @@ dados = deputados.ObterDeputados()
 
 Os dados já vêm parseados em um dicionário no estilo JSON, embora a API retorne os valores em formato XML. Isso é possível porque o **camaraPy** usa o fenomenal pacote [`xmltodict`](https://github.com/martinblech/xmltodict)para fazer a conversão. :heart:
 
-Por enquanto, a maneira mais fácil de usar é clonar esse repositório e importar os arquivos relevantes manualmente. Em breve, quando mais testes forem realizados, pretendo colocar tudo 
-no [PyPI](https://pypi.org/) para que você possa instalar o módulo via `pip`. ✨
+O **camaraPy** funciona só para o Python 3.6 ou superior.
+
+## Como instalar?
+
+`pip install camaraPy` ✨
+
 
 ## Coisas técnicas:
 

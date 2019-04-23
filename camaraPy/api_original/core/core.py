@@ -244,9 +244,12 @@ def build_url(request_type, parameters, webservice):
   # Seleciona o webservice desejado para a requisição
   request_types = WEBSERVICES[webservice]
 
+  # Seleciona os tipos válidos de requisição
+  valid_request_types = list(request_types.keys())
+
   # Checa se o tipo de requisição é válido
-  if request_type not in request_types.keys():
-    raise Exception(f"O tipo de requisição que você enviou é inválido. Os tipos válidos são: { list(request_types.keys()) }")
+  if request_type not in valid_request_types:
+    raise Exception(f"O tipo de requisição que você enviou é inválido. Os tipos válidos são: {valid_request_types}")
 
   # Para economizar operações e tornar o código mais claro, salva o subdicionário 
   # referente a esse tipo de requisição em uma variável.
