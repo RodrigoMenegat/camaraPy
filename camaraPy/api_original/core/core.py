@@ -9,7 +9,7 @@ import xmltodict
 ### EXCEÇÕES PERSONALIZADAS ###
 ###############################
 
-from .custom_exceptions import ProposicaoAcessoria
+from .custom_exceptions import ProposicaoAcessoria, SemDados
 
 #########################
 ## PARÂMETROS GLOBAIS ###
@@ -329,6 +329,7 @@ def make_request(request_type, parameters, webservice):
   # Monta url e faz requisicão
   url = build_url(request_type, parameters, webservice)
   response = requests.get(url)
+  response.encoding = 'utf-8'
   data = response.text
 
   # Levanta exceção HTTPError caso a resposta tenha código 4xx ou 5xx
@@ -336,8 +337,11 @@ def make_request(request_type, parameters, webservice):
   # denotam que não foram encontrados dados para uma busca específica?
   if response.status_code in range(400, 501):
 
-    if 'proposicao e acessoria' in data:
+    if 'proposição é acessória' in data.lower():
       raise ProposicaoAcessoria(ProposicaoAcessoria.err_message)
+
+    elif 'dados não encontrados' in data.lower():
+      raise SemDados(SemDados.err_message)
 
     else:
       raise requests.HTTPError(f"Houve um erro na sua requisição. O servidor respondeu com: '{data}'")
